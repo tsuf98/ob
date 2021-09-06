@@ -12,6 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/tsuf98/ob.git"
   },
+  "type": "module",
   "author": "Guy & Tsuf",
   "license": "ISC",
   "bugs": {

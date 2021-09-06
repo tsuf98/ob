@@ -1,9 +1,10 @@
-const app = require('express')();
-const mongoose = require('mongoose');
+import express from 'express';
+import mongoose from 'mongoose';
+import { mongoUri } from './secrets.js';
 
 const PORT = 8080 || process.env.PORT;
-const mongoUri =
-  'mongodb+srv://ob-app:orbaeven13@cluster0.auoth.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'; //TODO: remove this password from here and put it in a safe place
+
+const app = express();
 
 mongoose.connect(mongoUri, () =>
   console.log('DB connection established')
