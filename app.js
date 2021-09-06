@@ -1,5 +1,8 @@
-const app = require('express')();
-const mongoose = require('mongoose');
+import  mongoose  from 'mongoose';
+import express from 'express';
+import path from 'path';
+
+const app = express();
 
 const PORT = 8080 || process.env.PORT;
 const mongoUri =
@@ -9,8 +12,11 @@ mongoose.connect(mongoUri, () =>
   console.log('DB connection established')
 );
 
+app.use(express.static(path.join(path.resolve(), "backoffice", "build")));
+app.use(express.static("backoffice/public"));
+
 app.get('/', (req, res) => {
-  res.send('working!');
+  res.sendFile(path.join(path.resolve(), "backoffice", "build", "index.html"));
 });
 
 app.listen(PORT, () =>
