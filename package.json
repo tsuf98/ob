@@ -1,0 +1,22 @@
+{
+  "name": "ob",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsuf98/ob.git"
+  },
+  "author": "Guy & Tsuf",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tsuf98/ob/issues"
+  },
+  "homepage": "https://github.com/tsuf98/ob#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
