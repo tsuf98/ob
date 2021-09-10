@@ -1,6 +1,5 @@
 {
   "name": "ob",
-  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -13,7 +12,6 @@
     "type": "git",
     "url": "git+https://github.com/tsuf98/ob.git"
   },
-  "type": "module",
   "author": "Guy & Tsuf",
   "license": "ISC",
   "bugs": {
@@ -23,7 +21,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "mongoose": "^6.0.4",
-    "prettier": "^2.3.2"
+    "prettier": "^2.3.2",
+    "require-all": "^3.0.0"
   },
   "devDependencies": {
     "eslint": "^7.32.0",

@@ -1,8 +1,9 @@
-
-import  mongoose  from 'mongoose';
-import express from 'express';
-import path from 'path';
-import { mongoUri } from './secrets.js';
+const mongoose = require('mongoose');
+const express = require('express');
+const path = require('path');
+const { mongoUri } = require('./secrets.js');
+const requireAll = require('require-all');
+const ModelInitiator = require('./services/init-models');
 
 const app = express();
 
@@ -12,11 +13,16 @@ mongoose.connect(mongoUri, () =>
   console.log('DB connection established')
 );
 
-app.use(express.static(path.join(path.resolve(), "backoffice", "build")));
-app.use(express.static("backoffice/public"));
+requireAll(path.join(__dirname, 'models'));
+ModelInitiator.initModels();
+
+app.use(express.static(path.join(__dirname, 'backoffice', 'build')));
+app.use(express.static('backoffice/public'));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(path.resolve(), "backoffice", "build", "index.html"));
+  res.sendFile(
+    path.join(__dirname, 'backoffice', 'build', 'index.html')
+  );
 });
 
 app.listen(PORT, () =>
