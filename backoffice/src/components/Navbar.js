@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu } from 'semantic-ui-react';
 import { useHistory } from 'react-router-dom';
+import '../index.css';
 
 export const HOME = '/';
 export const TILES = '/tiles';
@@ -19,7 +20,7 @@ export default function Navbar() {
   };
 
   return (
-    <Menu>
+    <Menu className="navbar">
       <Menu.Item
         name={HOME}
         active={activeMenuItem === HOME}

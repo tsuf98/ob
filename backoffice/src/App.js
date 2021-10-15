@@ -2,12 +2,13 @@ import React from 'react';
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
+  Route
 } from 'react-router-dom';
 import 'semantic-ui-css/semantic.min.css';
 import Home from './components/Home';
 import Styled from 'styled-components';
 import Navbar, { PICTURES, TILES } from './components/Navbar';
+import TilesPage from './tiles/components/TilesPage';
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
         <Content>
           <Switch>
             <Route path={TILES}>
-              <About />
+              <TilesPage />
             </Route>
             <Route path={PICTURES}>
               <Users />

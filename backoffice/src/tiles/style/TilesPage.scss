@@ -1,0 +1,35 @@
+.tiles-page-container {
+	padding: 20px;
+
+	.tile-group {
+		display: flex;
+		gap: 20px;
+	}
+
+	.add-tile-button {
+		font-size: 1.3em;
+	}
+
+	.add-tile-button:hover {
+		background-color: lightblue;
+	}
+
+	.tile:hover {
+		transform: scale(1.1);
+	}
+}
+
+.tile-modal-container {
+	padding: 20px;
+	max-width: 40%;
+}
+
+.tile-modal-button {
+	background-color: lightblue !important;
+	font-size: large !important;
+}
+
+.tile-modal-input {
+	background-color: lightblue !important;
+	border: 1px solid #bbb;
+}
