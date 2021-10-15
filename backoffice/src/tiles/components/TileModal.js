@@ -1,42 +1,32 @@
 import React, { useRef, useState } from 'react';
-import {
-  Button,
-  Header,
-  Image,
-  Modal,
-  Input
-} from 'semantic-ui-react';
+import { Modal, Form, Dropdown } from 'semantic-ui-react';
 import Styled from 'styled-components';
 import '../style/TilesPage.scss';
+import { TILE_SIZE } from 'shared/constants';
+import Spacer from '../../components/Spacer';
 
 export default function TileModal({ tileData, isOpen, setOpen }) {
-  const tileNameInputRef = useRef();
-  const [isTileNameInputDisabled, setTileNameInputDisabled] =
-    useState(true);
   const [tileName, setTileName] = useState(tileData?.tileName || '');
-  const [tileNameButtonState, setTileNameButtonState] =
-    useState('edit');
 
-  const onEditTileNameClick = () => {
-    if (tileNameButtonState === 'edit') {
-      setTileNameInputDisabled(false);
-      tileNameInputRef.current.focus();
-      setTileNameButtonState('save');
-      return;
-    }
+  const [selectedTileSize, setSelectedTileSize] = useState();
 
-    console.log('new tile name is: ', tileName);
-
-    setTileNameButtonState('edit');
-    setTileNameInputDisabled(true);
+  const onTileNameChange = (changeEvent) => {
+    setTileName(changeEvent.target.value);
   };
 
-  const onTileNameChange = (_, data) => {
-    setTileName(data.value);
+  const onChangeTileSize = (changeEvent) => {
+    setSelectedTileSize(changeEvent.target.value);
   };
+
+  const options = [
+    { key: 'm', text: 'בדיקה', value: 'male' },
+    { key: 'f', text: 'בדיקה נוספת', value: 'female' },
+    { key: 'o', text: 'בהחלט', value: 'other' }
+  ];
 
   return (
     <Modal
+      closeIcon
       onClose={() => setOpen(false)}
       onOpen={() => setOpen(true)}
       open={isOpen}
@@ -46,31 +36,63 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
       <ModalImageContainer>
         <ModalImage
           alt="tile"
-          src="https://react.semantic-ui.com/images/avatar/large/rachel.png"
+          src="https://tileisrael.com/wp-content/uploads/2020/05/55.jpg"
           onClick={() => console.log('image clicked')}
         />
         <ModalImageOverlay>
-          <ModalImageOverlayButton>
-            עריכת תמונה
-          </ModalImageOverlayButton>
+          <ModalImageOverlayButton>עריכת תמונה</ModalImageOverlayButton>
         </ModalImageOverlay>
       </ModalImageContainer>
-      <TileNameContainer>
-        <Input
-          className="tile-modal-input"
-          disabled={isTileNameInputDisabled}
-          ref={tileNameInputRef}
-          placeholder="Search..."
-          onChange={onTileNameChange}
-          value={tileName}
-          size="huge"
-        />
-        <Button
-          className="tile-modal-button"
-          content={tileNameButtonState === 'edit' ? 'ערוך' : 'שמור'}
-          onClick={onEditTileNameClick}
-        />
-      </TileNameContainer>
+      <Form size="huge">
+        <InputContainer>
+          <label>שם האריח </label>
+          <Spacer height={'20px'} />
+          <input value={tileName} placeholder="test" onChange={onTileNameChange} />
+        </InputContainer>
+        <Spacer height={'20px'} />
+
+        <Form.Group inline>
+          <label>גודל אריח</label>
+          {Object.keys(TILE_SIZE).map((tileSize) => (
+            <div className="tile-sizes-container">
+              <label>
+                <input
+                  className="tile-radio-input"
+                  checked={tileSize === selectedTileSize}
+                  type="radio"
+                  value={tileSize}
+                  onChange={onChangeTileSize}
+                />
+                {TILE_SIZE[tileSize]}
+              </label>
+            </div>
+          ))}
+        </Form.Group>
+        <Spacer height={'1px'} />
+
+        <InputContainer>
+          <label>קטגוריות האריח </label>
+          <Spacer height={'20px'} />
+
+          <Dropdown
+            className="tile-categories"
+            fluid
+            multiple
+            selection
+            options={options}
+          />
+        </InputContainer>
+
+        <InputContainer>
+          <label>תיאור האריח </label>
+          <Spacer height={'20px'} />
+          <textarea rows={3} placeholder="test" />
+        </InputContainer>
+
+        <InputContainer>
+          <FormSubmitButton>עדכן פרטים</FormSubmitButton>
+        </InputContainer>
+      </Form>
     </Modal>
   );
 }
@@ -91,14 +113,13 @@ const ModalImageContainer = Styled.div`
 `;
 
 const ModalImage = Styled.img`
-	max-height: 50%;
-	max-width: 50%;
+	max-height: 80%;
+	max-width: 80%;
 `;
 
 const ModalImageOverlay = Styled.div`
 	position: absolute;
 	height: 100%;
-	width: 50%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -118,9 +139,17 @@ const ModalImageOverlayButton = Styled.button`
 	cursor:pointer;
 `;
 
-const TileNameContainer = Styled.div`
+const InputContainer = Styled.div`
 	display: flex;
-	align-content: center;
-	justify-content: center;
+	flex-direction: column;
+	align-items: center;
 	margin-top: 20px;
+	direction: rtl;
+`;
+
+const FormSubmitButton = Styled.button`
+	background-color: green;
+	padding: 10px;
+	font-size: 1.1em;
+	cursor:pointer;
 `;

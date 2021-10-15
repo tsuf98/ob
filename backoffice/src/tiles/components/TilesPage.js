@@ -18,11 +18,7 @@ export default function TilesPage() {
 
   return (
     <div className="tiles-page-container">
-      <TileModal
-        isOpen={isModalOpen}
-        setOpen={setModalOpen}
-        tileData={openTileData}
-      />
+      <TileModal isOpen={isModalOpen} setOpen={setModalOpen} tileData={openTileData} />
       <button class="ui right labeled icon button add-tile-button">
         <i class="plus icon"></i>
         הוסף אריח חדש
