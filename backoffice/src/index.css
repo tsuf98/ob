@@ -7,3 +7,9 @@ body *{
 .navbar * {
   font-size: 1.3em;
 }
+
+
+.ui * {
+  direction: rtl !important;
+  text-align: right !important;
+}

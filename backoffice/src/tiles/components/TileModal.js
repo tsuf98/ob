@@ -74,13 +74,7 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
           <label>קטגוריות האריח </label>
           <Spacer height={'20px'} />
 
-          <Dropdown
-            className="tile-categories"
-            fluid
-            multiple
-            selection
-            options={options}
-          />
+          <Dropdown fluid multiple selection options={options} />
         </InputContainer>
 
         <InputContainer>
