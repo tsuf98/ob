@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const aboutUsSchema = new Schema(
   {
-    languages: {
+    language: {
       type: String,
       enum: Object.values(LANG),
       unique: true

@@ -9,6 +9,15 @@ const tagSchema = new Schema(
   { timestamps: true }
 );
 
+tagSchema.statics.findOneOrCreate = async function ({
+  name,
+  hidden
+}) {
+  return (
+    (await this.findOne({ name })) || this.create({ name, hidden })
+  );
+};
+
 const Tag = mongoose.model('Tag', tagSchema);
 
 module.exports = {
