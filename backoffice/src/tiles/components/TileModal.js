@@ -7,8 +7,9 @@ import Spacer from '../../components/Spacer';
 
 export default function TileModal({ tileData, isOpen, setOpen }) {
   const [tileName, setTileName] = useState(tileData?.tileName || '');
-
   const [selectedTileSize, setSelectedTileSize] = useState();
+  const [tileImage, setTileImage] = useState('');
+  const imageInputRef = useRef(null);
 
   const onTileNameChange = (changeEvent) => {
     setTileName(changeEvent.target.value);
@@ -24,6 +25,25 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
     { key: 'o', text: 'בהחלט', value: 'other' }
   ];
 
+  const onEditImageClick = () => {
+    console.log('clicked');
+    console.log('imageInputRef', imageInputRef);
+
+    imageInputRef.current.click();
+  };
+
+  const onImageChange = (changeEvent) => {
+    console.log('change event: ', changeEvent);
+    console.log('change event: ', changeEvent.target.files[0]);
+
+    const file = changeEvent.target.files[0];
+    console.log(file);
+    const fileUrl = URL.createObjectURL(file);
+    console.log(fileUrl);
+
+    setTileImage(fileUrl);
+  };
+
   return (
     <Modal
       closeIcon
@@ -36,11 +56,18 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
       <ModalImageContainer>
         <ModalImage
           alt="tile"
-          src="https://tileisrael.com/wp-content/uploads/2020/05/55.jpg"
-          onClick={() => console.log('image clicked')}
+          src={tileImage || 'https://tileisrael.com/wp-content/uploads/2020/05/55.jpg'}
+        />
+        <input
+          type="file"
+          ref={imageInputRef}
+          style={{ display: 'none' }}
+          onChange={onImageChange}
         />
         <ModalImageOverlay>
-          <ModalImageOverlayButton>עריכת תמונה</ModalImageOverlayButton>
+          <ModalImageOverlayButton onClick={onEditImageClick}>
+            עריכת תמונה
+          </ModalImageOverlayButton>
         </ModalImageOverlay>
       </ModalImageContainer>
       <Form size="huge">
