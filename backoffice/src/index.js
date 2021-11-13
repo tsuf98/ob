@@ -3,10 +3,21 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
+const APOLLO_PORT = 4000 || process.env.APOLLO_PORT;
+const GRAPHQL_PATH = '/graphql';
+
+const apolloClient = new ApolloClient({
+  uri: `http://localhost:${APOLLO_PORT}${GRAPHQL_PATH}`,
+  cache: new InMemoryCache()
+});
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ApolloProvider client={apolloClient}>
+      <App />
+    </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
