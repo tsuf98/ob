@@ -1,5 +1,6 @@
 const { gql } = require('apollo-server-express');
 const typeDefs = gql`
+  scalar Upload
   enum LANG {
     Hebrew
     English
@@ -15,7 +16,7 @@ const typeDefs = gql`
   type Picture {
     _id: ID
     title: String!
-    # img: Upload //TODO:
+    img: Upload
     tags: [Tag]
     description: String
     connectedTiles: [Tile]
@@ -24,7 +25,7 @@ const typeDefs = gql`
   input PictureInput {
     _id: ID
     title: String!
-    # img: Upload //TODO:
+    img: Upload!
     tags: [TagInput]
     description: String
     connectedTiles: [TileInput]
@@ -87,6 +88,7 @@ const typeDefs = gql`
     editTag(input: TagInput): Tag
     createTile(input: TagInput): Tile
     editTile(input: TagInput): Tile
+    createPicture(pictureInput: PictureInput): Picture
   }
 `;
 

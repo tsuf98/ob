@@ -4,11 +4,17 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { createUploadLink } from 'apollo-upload-client';
 
 const APOLLO_PORT = 4000 || process.env.APOLLO_PORT;
 const GRAPHQL_PATH = '/graphql';
 
+const uploadLink = createUploadLink({
+  uri: `http://localhost:${APOLLO_PORT}${GRAPHQL_PATH}`
+});
+
 const apolloClient = new ApolloClient({
+  link: uploadLink,
   uri: `http://localhost:${APOLLO_PORT}${GRAPHQL_PATH}`,
   cache: new InMemoryCache()
 });

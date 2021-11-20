@@ -4,16 +4,28 @@ import Styled from 'styled-components';
 import '../style/TilesPage.scss';
 import { TILE_SIZE } from 'shared/constants';
 import Spacer from '../../components/Spacer';
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, useMutation, gql } from '@apollo/client';
 
 export default function TileModal({ tileData, isOpen, setOpen }) {
   const GET_TAGS = gql`
-    query GetTags {
+    query {
       getTags {
         name
       }
     }
   `;
+
+  const CREATE_PICTURE = gql`
+    mutation ($pictureInput: PictureInput) {
+      createPicture(pictureInput: $pictureInput) {
+        img
+      }
+    }
+  `;
+
+  const [createPicture] = useMutation(CREATE_PICTURE, {
+    onCompleted: (data) => console.log(data)
+  });
 
   const [tileName, setTileName] = useState(tileData?.tileName || '');
   const [selectedTileSize, setSelectedTileSize] = useState();
@@ -30,7 +42,9 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
 
   const { loading, error, data } = useQuery(GET_TAGS);
 
-  const tags = data.getTags.map(({ name }) => {
+  console.log('data is: ', data);
+
+  const tags = data?.getTags.map(({ name }) => {
     return { key: name, text: name, value: name };
   });
 
@@ -47,6 +61,7 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
 
     const file = changeEvent.target.files[0];
     console.log(file);
+    createPicture({ variables: { pictureInput: { title: 'testus123', img: file } } });
     const fileUrl = URL.createObjectURL(file);
     console.log(fileUrl);
 

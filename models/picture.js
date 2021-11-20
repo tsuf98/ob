@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const pictureSchema = new Schema(
   {
     title: { type: String, required: true },
-    img: Buffer, //TODO: change to something else later on
+    img: String, //TODO: change to something else later on
     tags: [{ type: Schema.Types.ObjectId, ref: 'Tag' }],
     description: String,
     connectedTiles: [{ type: Schema.Types.ObjectId, ref: 'Tile' }]
@@ -12,4 +12,4 @@ const pictureSchema = new Schema(
   { timestamps: true }
 );
 
-exports.Model = mongoose.model('Picture', pictureSchema);
+exports.PictureModel = mongoose.model('Picture', pictureSchema);
