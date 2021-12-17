@@ -13,10 +13,15 @@ const typeDefs = gql`
   #     "60x60"
   # }
 
+  type Image {
+    data: String!
+    contentType: String!
+  }
+
   type Picture {
     _id: ID
     title: String!
-    img: Upload
+    image: Image
     tags: [Tag]
     description: String
     connectedTiles: [Tile]
@@ -25,7 +30,7 @@ const typeDefs = gql`
   input PictureInput {
     _id: ID
     title: String!
-    img: Upload!
+    imageFile: Upload!
     tags: [TagInput]
     description: String
     connectedTiles: [TileInput]
@@ -80,6 +85,7 @@ const typeDefs = gql`
     # aboutUs(lang: String): AboutUs
     getTags(query: TagInput): [Tag]
     getTiles(query: TileInput): [Tile]
+    getPictures(query: PictureInput): [Picture]
   }
 
   type Mutation {

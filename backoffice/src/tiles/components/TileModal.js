@@ -18,19 +18,23 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
   const CREATE_PICTURE = gql`
     mutation ($pictureInput: PictureInput) {
       createPicture(pictureInput: $pictureInput) {
-        img
+        title
+        image {
+          data
+          contentType
+        }
       }
     }
   `;
-
-  const [createPicture] = useMutation(CREATE_PICTURE, {
-    onCompleted: (data) => console.log(data)
-  });
 
   const [tileName, setTileName] = useState(tileData?.tileName || '');
   const [selectedTileSize, setSelectedTileSize] = useState();
   const [tileImage, setTileImage] = useState('');
   const imageInputRef = useRef(null);
+
+  const [createPicture] = useMutation(CREATE_PICTURE, {
+    onCompleted: (data) => setTileImage(data.createPicture.image)
+  });
 
   const onTileNameChange = (changeEvent) => {
     setTileName(changeEvent.target.value);
@@ -42,34 +46,36 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
 
   const { loading, error, data } = useQuery(GET_TAGS);
 
-  console.log('data is: ', data);
-
   const tags = data?.getTags.map(({ name }) => {
     return { key: name, text: name, value: name };
   });
 
   const onEditImageClick = () => {
-    console.log('clicked');
-    console.log('imageInputRef', imageInputRef);
-
     imageInputRef.current.click();
   };
 
   const onImageChange = (changeEvent) => {
-    console.log('change event: ', changeEvent);
-    console.log('change event: ', changeEvent.target.files[0]);
-
     const file = changeEvent.target.files[0];
-    console.log(file);
-    createPicture({ variables: { pictureInput: { title: 'testus123', img: file } } });
-    const fileUrl = URL.createObjectURL(file);
-    console.log(fileUrl);
 
-    setTileImage(fileUrl);
+    createPicture({
+      variables: { pictureInput: { title: 'testus123', imageFile: file } }
+    });
   };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
+
+  // if (pictureData?.getPictures.length > 0) {
+  //   return (
+  //     <img
+  //       src={`data:${pictureData.getPictures[0].image.contentType};base64,${pictureData.getPictures[0].image.data}`}
+  //     />
+  //   );
+  // }
+
+  const tileImageSrc = tileImage
+    ? `data:${tileImage.contentType};base64,${tileImage.data}`
+    : '';
 
   return (
     <Modal
@@ -83,8 +89,9 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
       <ModalImageContainer>
         <ModalImage
           alt="tile"
-          src={tileImage || 'https://tileisrael.com/wp-content/uploads/2020/05/55.jpg'}
+          src={tileImageSrc || 'https://tileisrael.com/wp-content/uploads/2020/05/55.jpg'}
         />
+
         <input
           type="file"
           ref={imageInputRef}
