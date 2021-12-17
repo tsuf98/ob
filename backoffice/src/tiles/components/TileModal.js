@@ -65,17 +65,7 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
-  // if (pictureData?.getPictures.length > 0) {
-  //   return (
-  //     <img
-  //       src={`data:${pictureData.getPictures[0].image.contentType};base64,${pictureData.getPictures[0].image.data}`}
-  //     />
-  //   );
-  // }
-
-  const tileImageSrc = tileImage
-    ? `data:${tileImage.contentType};base64,${tileImage.data}`
-    : '';
+  const tileImageSrc = tileImage ? `data:${tileImage.contentType};base64,${tileImage.data}` : '';
 
   return (
     <Modal
@@ -99,9 +89,7 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
           onChange={onImageChange}
         />
         <ModalImageOverlay>
-          <ModalImageOverlayButton onClick={onEditImageClick}>
-            עריכת תמונה
-          </ModalImageOverlayButton>
+          <ModalImageOverlayButton onClick={onEditImageClick}>עריכת תמונה</ModalImageOverlayButton>
         </ModalImageOverlay>
       </ModalImageContainer>
       <Form size="huge">
