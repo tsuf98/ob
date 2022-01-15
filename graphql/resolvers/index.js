@@ -1,6 +1,7 @@
 const { GraphQLUpload } = require('graphql-upload');
 const tagResolvers = require('./tag');
 const pictureResolvers = require('./picture');
+const tileResolvers = require('./tile');
 
 // const { PictureModel } = require('../../models/picture');
 
@@ -13,7 +14,8 @@ const resolvers = {
     // },
     // tiles: () => find(Tile),
     ...tagResolvers.Query,
-    ...pictureResolvers.Query
+    ...pictureResolvers.Query,
+    ...tileResolvers.Query
   },
   Mutation: {
     // aboutUs: (root, { input }) => {
@@ -22,7 +24,8 @@ const resolvers = {
     // },
     // tiles: (root, { input }) => create(Tile, input),
     ...tagResolvers.Mutation,
-    ...pictureResolvers.Mutation
+    ...pictureResolvers.Mutation,
+    ...tileResolvers.Mutation
   }
 };
 

@@ -14,8 +14,21 @@
 		background-color: lightblue;
 	}
 
+	.tile {
+		max-height: 300px !important;
+	}
+
+	.tile-content {
+		height: 20% !important;
+	}
+
+
+	.tile-image {
+		height: 80% !important;
+	}
+
 	.tile:hover {
-		transform: scale(1.1);
+		transform: scale(1.1) !important;
 	}
 }
 

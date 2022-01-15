@@ -1,10 +1,26 @@
-import React, { useRef, useState } from 'react';
-import { Modal, Form, Dropdown } from 'semantic-ui-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Modal, Form, Dropdown, Popup, Button } from 'semantic-ui-react';
 import Styled from 'styled-components';
 import '../style/TilesPage.scss';
 import { TILE_SIZE } from 'shared/constants';
 import Spacer from '../../components/Spacer';
 import { useQuery, useMutation, gql } from '@apollo/client';
+import {
+  pleaseFillInTheFollowingDetails,
+  tileImageText,
+  tileCategoriesText,
+  tileDescriptionText,
+  tileNameText,
+  tileSizeText
+} from '../texts';
+import {
+  SAVE_TILE,
+  TILE_CATEGORIES_PLACEHOLDER,
+  TILE_DESCRIPTION_PLACEHOLDER,
+  TILE_NAME_PLACEHOLDER,
+  TILE_PLACEHOLDER_IMAGE,
+  UPDATE_TILE
+} from '../tileConstants';
 
 export default function TileModal({ tileData, isOpen, setOpen }) {
   const GET_TAGS = gql`
@@ -27,13 +43,30 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
     }
   `;
 
-  const [tileName, setTileName] = useState(tileData?.tileName || '');
-  const [selectedTileSize, setSelectedTileSize] = useState();
-  const [tileImage, setTileImage] = useState('');
+  const CREATE_TILE = gql`
+    mutation ($tileInput: TileInput) {
+      createTile(tileInput: $tileInput) {
+        title
+      }
+    }
+  `;
+
+  const [tileName, setTileName] = useState(tileData?.title || '');
+  const [tileSize, setTileSize] = useState(tileData?.size);
+  const [tileImage, setTileImage] = useState(tileData?.connectedImages[0]?.image);
+  const [tileImageFile, setTileImageFile] = useState();
+
+  const [tagOptions, setTagOptions] = useState();
+  const [tileCategories, setTileCategories] = useState(tileData?.tags?.map((tag) => tag.name));
+  const [tileDescription, setTileDescription] = useState(tileData?.description);
   const imageInputRef = useRef(null);
 
   const [createPicture] = useMutation(CREATE_PICTURE, {
     onCompleted: (data) => setTileImage(data.createPicture.image)
+  });
+
+  const [createTile] = useMutation(CREATE_TILE, {
+    onCompleted: (data) => console.log('saved tile - data: ', data)
   });
 
   const onTileNameChange = (changeEvent) => {
@@ -41,31 +74,96 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
   };
 
   const onChangeTileSize = (changeEvent) => {
-    setSelectedTileSize(changeEvent.target.value);
+    setTileSize(changeEvent.target.value);
+  };
+
+  const onChangeTileCategories = (_, data) => {
+    console.log('current categories', data.value);
+    console.log('TILE categories', tileCategories);
+
+    setTileCategories(data.value);
+  };
+
+  const onAddTileCategory = (_, { value }) => {
+    setTagOptions([...tagOptions, { key: value, text: value, value }]);
+  };
+
+  const onChangeTileDescription = (changeEvent) => {
+    setTileDescription(changeEvent.target.value);
   };
 
   const { loading, error, data } = useQuery(GET_TAGS);
 
-  const tags = data?.getTags.map(({ name }) => {
-    return { key: name, text: name, value: name };
-  });
+  if (!tagOptions && data) {
+    setTagOptions(data.getTags.map(({ name }) => ({ key: name, text: name, value: name })));
+  }
 
   const onEditImageClick = () => {
     imageInputRef.current.click();
   };
 
+  const getTileTags = () =>
+    tileCategories.map((tileCategory) => ({
+      name: tileCategory,
+      hidden: false
+    }));
+
+  const getTilePictureInput = () => ({
+    title: tileImageFile.name,
+    imageFile: tileImageFile,
+    tags: getTileTags(),
+    description: tileDescription
+  });
+
   const onImageChange = (changeEvent) => {
     const file = changeEvent.target.files[0];
+    console.log('file is: ', file);
+    console.log('file name is: ', file.name);
 
-    createPicture({
-      variables: { pictureInput: { title: 'testus123', imageFile: file } }
-    });
+    const fileUrl = URL.createObjectURL(file);
+    setTileImageFile(file);
+    setTileImage(fileUrl);
+    // createPicture({
+    //   variables: { pictureInput: { title: 'testus123', imageFile: file } }
+    // });
   };
+
+  const onSubmit = () => {
+    // TODO(need to validate the input)
+    createTile({
+      variables: {
+        tileInput: {
+          title: tileName,
+          connectedImages: [getTilePictureInput()],
+          tags: getTileTags(),
+          description: tileDescription,
+          size: TILE_SIZE[tileSize]
+        }
+      }
+    });
+
+    setOpen(false);
+  };
+
+  const tileHasMissingData =
+    !tileImage || !tileName || !tileSize || !tileCategories || !tileDescription;
+
+  const getMissingDataInfo = () =>
+    `${pleaseFillInTheFollowingDetails} ${tileImage ? '' : tileImageText} ${
+      tileName ? '' : tileNameText
+    } ${tileSize ? '' : tileSizeText} ${tileCategories ? '' : tileCategoriesText} ${
+      tileDescription ? '' : tileDescriptionText
+    }`;
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
-  const tileImageSrc = tileImage ? `data:${tileImage.contentType};base64,${tileImage.data}` : '';
+  const tileImageSrc =
+    typeof tileImage === 'object'
+      ? `data:${tileImage.contentType};base64,${tileImage.data}`
+      : tileImage;
+
+  const saveButtonTitle = tileData ? UPDATE_TILE : SAVE_TILE;
 
   return (
     <Modal
@@ -77,10 +175,7 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
     >
       <ModalHeader>עריכת פרטי אריח</ModalHeader>
       <ModalImageContainer>
-        <ModalImage
-          alt="tile"
-          src={tileImageSrc || 'https://tileisrael.com/wp-content/uploads/2020/05/55.jpg'}
-        />
+        <ModalImage alt="tile" src={tileImageSrc || TILE_PLACEHOLDER_IMAGE} />
 
         <input
           type="file"
@@ -96,23 +191,23 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
         <InputContainer>
           <label>שם האריח </label>
           <Spacer height={'20px'} />
-          <input value={tileName} placeholder="test" onChange={onTileNameChange} />
+          <input value={tileName} placeholder={TILE_NAME_PLACEHOLDER} onChange={onTileNameChange} />
         </InputContainer>
         <Spacer height={'20px'} />
 
         <Form.Group inline>
           <label>גודל אריח</label>
-          {Object.keys(TILE_SIZE).map((tileSize) => (
+          {Object.keys(TILE_SIZE).map((size) => (
             <div className="tile-sizes-container">
               <label>
                 <input
                   className="tile-radio-input"
-                  checked={tileSize === selectedTileSize}
+                  checked={size === tileSize}
                   type="radio"
-                  value={tileSize}
+                  value={size}
                   onChange={onChangeTileSize}
                 />
-                {TILE_SIZE[tileSize]}
+                {TILE_SIZE[size]}
               </label>
             </div>
           ))}
@@ -123,17 +218,41 @@ export default function TileModal({ tileData, isOpen, setOpen }) {
           <label>קטגוריות האריח </label>
           <Spacer height={'20px'} />
 
-          <Dropdown fluid multiple selection options={tags} />
+          <Dropdown
+            allowAdditions
+            search
+            fluid
+            multiple
+            selection
+            options={tagOptions}
+            onAddItem={onAddTileCategory}
+            onChange={onChangeTileCategories}
+            value={tileCategories}
+            placeholder={TILE_CATEGORIES_PLACEHOLDER}
+          />
         </InputContainer>
 
         <InputContainer>
           <label>תיאור האריח </label>
           <Spacer height={'20px'} />
-          <textarea rows={3} placeholder="test" />
+          <textarea
+            rows={3}
+            placeholder={TILE_DESCRIPTION_PLACEHOLDER}
+            value={tileDescription}
+            onChange={onChangeTileDescription}
+          />
         </InputContainer>
 
         <InputContainer>
-          <FormSubmitButton>עדכן פרטים</FormSubmitButton>
+          <Popup
+            content={getMissingDataInfo()}
+            disabled={!tileHasMissingData}
+            trigger={
+              <Button size="big" onClick={onSubmit}>
+                {saveButtonTitle}
+              </Button>
+            }
+          ></Popup>
         </InputContainer>
       </Form>
     </Modal>
@@ -156,8 +275,8 @@ const ModalImageContainer = Styled.div`
 `;
 
 const ModalImage = Styled.img`
-	max-height: 80%;
-	max-width: 80%;
+	max-height: 300px;
+	max-width: 300px;
 `;
 
 const ModalImageOverlay = Styled.div`

@@ -24,7 +24,6 @@ const typeDefs = gql`
     image: Image
     tags: [Tag]
     description: String
-    connectedTiles: [Tile]
   }
 
   input PictureInput {
@@ -33,7 +32,6 @@ const typeDefs = gql`
     imageFile: Upload!
     tags: [TagInput]
     description: String
-    connectedTiles: [TileInput]
   }
 
   type AboutUs {
@@ -59,7 +57,7 @@ const typeDefs = gql`
 
   input TagInput {
     _id: ID
-    name: String
+    name: String!
     hidden: Boolean
   }
 
@@ -92,7 +90,7 @@ const typeDefs = gql`
     # aboutUs(input: AboutUsInput): AboutUs
     createTag(input: TagInput): Tag
     editTag(input: TagInput): Tag
-    createTile(input: TagInput): Tile
+    createTile(tileInput: TileInput): Tile
     editTile(input: TagInput): Tile
     createPicture(pictureInput: PictureInput): Picture
   }
